@@ -1,0 +1,19 @@
+[project]
+name = "emby-actor-sync"
+version = "0.1.0"
+description = "以媒体库 NFO 为准，把演员头像同步到 Emby people 目录"
+readme = "README.md"
+authors = [
+    { name = "BLRQF", email = "1845804825@qq.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "tqdm>=4.70.0",
+]
+
+[project.scripts]
+emby-actors = "emby_actor_sync:main"
+
+[build-system]
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
