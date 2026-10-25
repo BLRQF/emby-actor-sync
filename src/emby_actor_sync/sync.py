@@ -40,7 +40,8 @@ def make_plan(result: ScanResult, people_dir: Path, storage: Storage, limit: int
     for tid, actor in sorted(result.actors.items()):
         row = storage.get(tid)
         image = actor_image_path(people_dir, actor.name, tid)
-        file_ok = image.is_file() and image.stat().st_size > 0
+        size = image.stat().st_size if image.is_file() else -1
+        file_ok = size > 0
         if row is None:
             category = "替换旧图" if file_ok else "新增"
         elif row.thumb_path != actor.thumb_url:
@@ -49,6 +50,8 @@ def make_plan(result: ScanResult, people_dir: Path, storage: Storage, limit: int
             category = "重命名"
         elif not file_ok:
             category = "文件缺失"
+        elif row.file_size is not None and size != row.file_size:
+            category = "内容被改"  # 文件被替换/重压（如 Emby 刷新元数据时覆盖），按记录重新下载
         else:
             plan.skip += 1
             continue

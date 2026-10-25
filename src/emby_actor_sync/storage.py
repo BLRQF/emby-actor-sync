@@ -26,6 +26,7 @@ class Record:
     tmdbid: int
     name: str
     thumb_path: str
+    file_size: int | None  # 下载时的字节数，用于识别文件被替换/重压
 
 
 class Storage:
@@ -37,9 +38,9 @@ class Storage:
 
     def get(self, tmdbid: int) -> Record | None:
         row = self.conn.execute(
-            "SELECT tmdbid, name, thumb_path FROM actors WHERE tmdbid = ?", (tmdbid,)
+            "SELECT tmdbid, name, thumb_path, file_size FROM actors WHERE tmdbid = ?", (tmdbid,)
         ).fetchone()
-        return Record(row[0], row[1], row[2]) if row else None
+        return Record(row[0], row[1], row[2], row[3]) if row else None
 
     def upsert(self, tmdbid: int, name: str, thumb_path: str, file_size: int) -> None:
         with self._lock:

@@ -35,7 +35,11 @@ uv 管理的 Python 项目，把媒体库 NFO 中的演员头像同步到 Emby �
   reconfigure 成 UTF-8。
 - DB 默认路径用 `Path(__file__).resolve().parents[2]`（src/emby_actor_sync/__init__.py
   上两级 = 项目根），别用 `parent.parent`（那是 src/，踩过坑）。
-- 增量判定：DB 无记录 / thumb 路径变了 / 名字变了 / folder.jpg 缺失或 0 字节。
+- 增量判定：DB 无记录 / thumb 路径变了 / 名字变了 / folder.jpg 缺失或 0 字节 /
+  文件字节数与 DB 记录的 file_size 不符（被替换或重压，分类"内容被改"）。
+- **坑：Emby 会覆盖 folder.jpg**。Emby 刷新人物元数据时会用自己的缩略图（632px 宽）
+  覆盖我们下载的原图。2026-10-03 实测 2796 人中有 294 张被换成 632px 版本
+  （196 张变小、98 张由小原图放大而来），靠 file_size 比对可全部发现并自动重下。
 - 模块：scanner.py（只读扫描聚合）、naming.py（目录命名）、storage.py（SQLite）、
   downloader.py（RateLimiter 自适应限速 + 重试 + 原子写入）、sync.py（线程池下载/
   计划/清理/汇报）。

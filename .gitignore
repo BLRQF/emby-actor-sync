@@ -11,3 +11,6 @@ wheels/
 
 # 运行时数据
 people.db
+
+
+start.ps1
